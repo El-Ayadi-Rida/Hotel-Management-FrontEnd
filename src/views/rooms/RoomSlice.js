@@ -20,7 +20,7 @@ export const getRooms = createAsyncThunk("rooms/getRooms",async (rejectWithValue
       } catch (error) {
       console.error("Create Room failed:", error);
       // Return a custom error message or the error itself
-      return rejectWithValue(error.response?.data?.message || "Create Hotel failed. Please try again.");
+      return rejectWithValue(error.response?.data?.message || "Create Room failed. Please try again.");
     }
   })
 

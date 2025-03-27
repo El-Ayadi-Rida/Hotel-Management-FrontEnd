@@ -26,7 +26,7 @@ const Rooms = () => {
   const title = 'Rooms';
   const description = 'Manage Rooms edit, delete and add.';
   const breadcrumbs = [
-    { to: '/dashboard', text: 'Dashboard' },
+    { to: '/admin/dashboard', text: 'Dashboard' },
   ];
 
   const columns = React.useMemo(() => {

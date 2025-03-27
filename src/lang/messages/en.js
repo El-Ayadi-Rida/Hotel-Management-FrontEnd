@@ -177,5 +177,6 @@ const enMessages = {
   'menu.add': 'Add',
   'menu.test': 'Test',
   'menu.room': 'Room',
+  'menu.bookings': 'Bookings',
 };
 export default enMessages;

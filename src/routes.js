@@ -16,6 +16,9 @@ const hotel = {
 const room = {
   list: lazy(() => import('views/rooms/Rooms')),
 };
+const bookings = {
+  list: lazy(() => import('views/bookings/Bookings')),
+};
 
 
 const appRoot = DEFAULT_PATHS.APP.endsWith('/') ? DEFAULT_PATHS.APP.slice(1, DEFAULT_PATHS.APP.length) : DEFAULT_PATHS.APP;
@@ -80,6 +83,14 @@ const routesAndMenuItems = {
       icon: 'circle',
       exact: true,
       component: room.list,
+      roles: [USER_ROLE.Admin],
+    },
+    {
+      path: `${appRoot}/admin/bookings`,
+      label: 'menu.bookings',
+      icon: 'square',
+      exact: true,
+      component: bookings.list,
       roles: [USER_ROLE.Admin],
     },
   ],

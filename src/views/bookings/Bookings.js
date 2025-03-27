@@ -2,28 +2,26 @@
 import React, { useEffect, useState } from 'react';
 import { Badge, Button, Col, Form, Row } from 'react-bootstrap';
 import { useTable, useGlobalFilter, useSortBy, usePagination, useRowSelect, useRowState, useAsyncDebounce } from 'react-table';
-import axios from 'axios';
 import HtmlHead from 'components/html-head/HtmlHead';
 import BreadcrumbList from 'components/breadcrumb-list/BreadcrumbList';
 import { useDispatch, useSelector } from 'react-redux';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
-import ButtonsAddNew from '../sharedCompoments/ButtonsAddNew';
 import ControlsPageSize from '../sharedCompoments/ControlsPageSize';
-import ControlsAdd from '../sharedCompoments/ControlsAdd';
 import ControlsSearch from '../sharedCompoments/ControlsSearch';
-import ModalAddEdit from './components/ModalAddEdit';
 import Table from '../sharedCompoments/Table';
 import TablePagination from '../sharedCompoments/TablePagination';
-import { getHotels, setSelectedHotel } from './HotelSlice';
-import DeleteConfirmModal from './components/DeleteConfirmModal';
+import { getBookings, setSelectedBooking } from './BookingsSlice';
+import CancelModal from './components/CancelModal';
+import ConfirmModal from './components/ConfirmModal';
 
-const Hotels = () => {
+
+const Bookings = () => {
   const dispatch = useDispatch();
-  const [isOpenAddEditModal, setIsOpenAddEditModal] = useState(false);
-  const [isOpenDeleteConfirmModal, setIsOpenDeleteConfirmModal] = useState(false);
+  const [isOpenConfirmModal, setIsOpenConfirmModal] = useState(false);
+  const [isOpenCancelModal, setIsOpenCancelModal] = useState(false);
 
-  const title = 'Hotels';
-  const description = 'Manage Hotels edit, delete and add.';
+  const title = 'Bookings';
+  const description = 'Manage Bookings edit, cancel and get.';
   const breadcrumbs = [
     { to: '/admin/dashboard', text: 'Dashboard' },
   ];
@@ -31,40 +29,52 @@ const Hotels = () => {
   const columns = React.useMemo(() => {
     return [
       {
-        Header: 'Name',
-        accessor: 'name',
+        Header: 'Booking Id',
+        accessor: 'id',
+        sortable: true,
+        headerClassName: 'text-muted text-small text-uppercase w-10',
+      },
+      {
+        Header: 'Check In Date',
+        accessor: 'checkInDate',
         sortable: true,
         headerClassName: 'text-muted text-small text-uppercase w-30',
       },
       {
-        Header: 'Location',
-        accessor: 'location',
+        Header: 'Check Out Date',
+        accessor: 'checkOutDate',
         sortable: true,
         headerClassName: 'text-muted text-small text-uppercase w-30',
+      },
+      {
+        Header: 'Status',
+        accessor: 'status',
+        sortable: true,
+        headerClassName: 'text-muted text-small text-uppercase w-10',
       },
       {
         Header: '',
         id: 'action',
-        headerClassName: 'empty w-10',
+        headerClassName: 'empty w-20',
         Cell: ({ row }) => {
           const { original } = row;
           return (
           <div>
               <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-only mb-1"
                   onClick={() => {
-                    dispatch(setSelectedHotel(original));
-                    setIsOpenDeleteConfirmModal(true);
+                    dispatch(setSelectedBooking(original));
+                    setIsOpenCancelModal(true);                    
                   }}              
               >
-                <CsLineIcons icon="bin" />
+                <CsLineIcons icon="close" />
               </Button>{' '}
-              <Button variant="outline-warning" size="sm" className="btn-icon btn-icon-only mb-1"
+              <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-only mb-1"
                   onClick={() => {
-                    dispatch(setSelectedHotel(original));
-                    setIsOpenAddEditModal(true);
+                    dispatch(setSelectedBooking(original));
+                    setIsOpenConfirmModal(true);
                   }}              
               >
-                <CsLineIcons icon="edit" />
+                <CsLineIcons icon="check" />
               </Button>
           </div>
           );
@@ -74,23 +84,22 @@ const Hotels = () => {
   }, []);
 
 
-  const { hotels: data, status, error , addEditStatus } = useSelector((state) => state.hotel);
-
+  const { bookings: data, status, error , addEditStatus } = useSelector((state) => state.booking);
 
   const tableInstance = useTable(
     {
       columns,
       data,
-      isOpenAddEditModal,
-      setIsOpenAddEditModal,
-      isOpenDeleteConfirmModal,
-      setIsOpenDeleteConfirmModal,
+      isOpenConfirmModal,
+      setIsOpenConfirmModal,
+      isOpenCancelModal,
+      setIsOpenCancelModal,
       manualPagination: true,
       manualFilters: true,
       manualSortBy: true,
       autoResetPage: false,
       autoResetSortBy: false,
-      initialState: { pageIndex: 0, sortBy: [{ id: 'name', desc: false }], hiddenColumns: ['id'] },
+      initialState: { pageIndex: 0, sortBy: [{ id: 'name', desc: false }], hiddenColumns: [] },
     },
     useGlobalFilter,
     useSortBy,
@@ -101,10 +110,8 @@ const Hotels = () => {
 
 
   useEffect(() => {
-    dispatch(getHotels());
+    dispatch(getBookings());
   }, []);
-
-  console.log("STATUS::", addEditStatus);
   
 
   return (
@@ -119,9 +126,6 @@ const Hotels = () => {
                 <h1 className="mb-0 pb-0 display-4">{title}</h1>
                 <BreadcrumbList items={breadcrumbs} />
               </Col>
-              <Col xs="12" md="5" className="d-flex align-items-start justify-content-end">
-                <ButtonsAddNew tableInstance={tableInstance} />
-              </Col>
             </Row>
           </div>
 
@@ -133,9 +137,6 @@ const Hotels = () => {
                 </div>
               </Col>
               <Col sm="12" md="7" lg="9" xxl="10" className="text-end">
-                <div className="d-inline-block me-0 me-sm-3 float-start float-md-none">
-                  <ControlsAdd tableInstance={tableInstance} />
-                </div>
                 <div className="d-inline-block">
                   <ControlsPageSize tableInstance={tableInstance} />
                 </div>
@@ -150,12 +151,12 @@ const Hotels = () => {
               </Col>
             </Row>
           </div>
-          {isOpenAddEditModal && <ModalAddEdit tableInstance={tableInstance} />}
-          {isOpenDeleteConfirmModal && <DeleteConfirmModal tableInstance={tableInstance} />}
+          {isOpenCancelModal && <CancelModal tableInstance={tableInstance} />}
+          {isOpenConfirmModal && <ConfirmModal tableInstance={tableInstance} />}
         </Col>
       </Row>
     </>
   );
 };
 
-export default Hotels;
+export default Bookings;

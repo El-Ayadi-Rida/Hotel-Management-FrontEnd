@@ -18,6 +18,7 @@ import scrollspyReducer from 'components/scrollspy/scrollspySlice';
 import { REDUX_PERSIST_KEY } from 'config.js';
 import hotelsReducer from 'views/hotels/HotelSlice';
 import roomsReducer from 'views/rooms/RoomSlice';
+import bookingsReducer from 'views/bookings/BookingsSlice';
 
 const persistConfig = {
   key: REDUX_PERSIST_KEY,
@@ -36,7 +37,8 @@ const persistedReducer = persistReducer(
     notification: notificationReducer,
     scrollspy: scrollspyReducer,
     hotel: hotelsReducer , 
-    room: roomsReducer
+    room: roomsReducer ,
+    booking: bookingsReducer
   })
 );
 const store = configureStore({
