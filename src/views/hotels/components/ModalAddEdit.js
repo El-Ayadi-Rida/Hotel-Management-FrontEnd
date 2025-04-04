@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Form, Modal, Spinner } from 'react-bootstrap';
+import Select from 'react-select';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
 import { createHotel, setSelectedHotel, updateHotel } from '../HotelSlice';
+import locationOptions from './Cities.json';
 
 
 const ModalAddEdit = ({ tableInstance }) => {
   const dispatch = useDispatch();
   const { addEditStatus , addEditError , selectedHotel } = useSelector((state) => state.hotel);
   const { setIsOpenAddEditModal, isOpenAddEditModal } = tableInstance;
+  const [locationValue, setLocationValue] = useState({ value: '', label: 'Select Location' });
+  
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
@@ -42,6 +46,7 @@ const ModalAddEdit = ({ tableInstance }) => {
     
     if (isOpenAddEditModal && selectedHotel) {
       setValues(selectedHotel);
+      if(selectedHotel?.location) setLocationValue(locationOptions.find((option)=> option.value === selectedHotel.location));
     }else{
       setValues(initialValues);
     }
@@ -52,8 +57,12 @@ const ModalAddEdit = ({ tableInstance }) => {
   const onHide = () =>{
     dispatch(setSelectedHotel(undefined));
     setIsOpenAddEditModal(false);
-    resetForm();
+    resetForm();  
   }
+  const onChangeLocation = (selectedOption) => {
+    setFieldValue('location', selectedOption.value);
+    setLocationValue(selectedOption);
+  };
   const renderButtonContent = () => {
     if (addEditStatus === 'loading') {
       return (
@@ -77,7 +86,7 @@ const ModalAddEdit = ({ tableInstance }) => {
           </div>
           <div className="mb-3">
             <Form.Label>Location</Form.Label>
-            <Form.Control type="text" name="location" onChange={handleChange} value={values.location} placeholder="Hotel location ..."/>
+            <Select classNamePrefix="react-select" name="location" options={locationOptions} value={locationValue} onChange={onChangeLocation} placeholder="Select City" />
             {errors.location && touched.location && <div className="d-block invalid-tooltip">{errors.location}</div>}
           </div>
           <div className="mb-3">

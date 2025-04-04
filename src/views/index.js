@@ -14,16 +14,25 @@ import { USER_ROLE } from 'constants.js';
 import { getRooms } from './rooms/RoomSlice';
 import ControlsPageSize from './sharedCompoments/ControlsPageSize';
 import TablePagination from './sharedCompoments/TablePagination';
+import cityOptions from './hotels/components/Cities.json';
+import { book } from './bookings/BookingsSlice';
 
 
 const FilterMenuContent = () => {
   const dispatch = useDispatch();
   const [statusValue, setStatusValue] = useState({ value: '', label: 'Select Status' });
+  const [cityValue, setCityValue] = useState({ value: '', label: 'Select City' });
+  const [typeValue, setTypeValue] = useState({ value: '', label: 'Select Type' });
+  
   const statusOptions = [
     { value: 'Available', label: 'Available' },
     { value: 'Booked', label: 'Booked' },
   ];
-
+  const typeOptions = [
+    { value: 'Single', label: 'Single' },
+    { value: 'Double', label: 'Double' },
+    { value: 'Suite', label: 'Suite' },
+  ];
   const validationSchema = Yup.object().shape({
     });
 
@@ -32,6 +41,8 @@ const FilterMenuContent = () => {
       pets: false,
       adults: 2,
       children: 0,
+      location: '',
+      type: ''
     };
 
   const onSubmit = async(values) =>{
@@ -44,6 +55,16 @@ const FilterMenuContent = () => {
     setFieldValue('status', selectedOption.value);
     setStatusValue(selectedOption);
   };
+  const cityOnChange = (selectedOption) => {
+    setFieldValue('location', selectedOption.value);
+    setCityValue(selectedOption);
+  };
+
+  const typeOnChange = (selectedOption) => {
+    setFieldValue('type', selectedOption.value);
+    setTypeValue(selectedOption);
+  };
+
 
   const spinUpAdults = () => {
     setFieldValue('adults' , parseInt(typeof values.adults === 'number' ? values.adults : 0, 10) + 1)
@@ -68,6 +89,16 @@ const FilterMenuContent = () => {
           <Form.Label>Room Status</Form.Label>
           <Select classNamePrefix="react-select" name="status" options={statusOptions} value={statusValue} onChange={statusOnChange} placeholder="Select" />
           {errors.status && touched.status && <div className="d-block invalid-tooltip">{errors.status}</div>}
+        </div>
+        <div className="mb-3">
+          <Form.Label>City</Form.Label>
+          <Select classNamePrefix="react-select" name="location" options={cityOptions} value={cityValue} onChange={cityOnChange} placeholder="Select city" />
+          {errors.location && touched.location && <div className="d-block invalid-tooltip">{errors.location}</div>}
+        </div>
+        <div className="mb-3">
+          <Form.Label>Type</Form.Label>
+          <Select classNamePrefix="react-select" name="type" options={typeOptions} value={typeValue} onChange={typeOnChange} placeholder="Select type" />
+          {errors.type && touched.type && <div className="d-block invalid-tooltip">{errors.type}</div>}
         </div>
         <div className="mb-3">
             <Form.Label>adults</Form.Label>
@@ -102,7 +133,7 @@ const FilterMenuContent = () => {
           <div className="mb-3">
             <Form.Label>Pets</Form.Label>
             <Form.Group className="form-group position-relative tooltip-end-top">
-              <Form.Check type="switch" id="pets" name='pets' checked={values.pets} onChange={handleChange} label="Set as Active" />
+              <Form.Check type="switch" id="pets" name='pets' checked={values.pets} onChange={handleChange} label={values.pets? 'With pets': 'without pets'} />
               {errors.pets && touched.pets && <div className="d-block invalid-tooltip">{errors.pets}</div>}
             </Form.Group>
           </div>
@@ -161,7 +192,15 @@ const index = () => {
     useRowSelect,
     useRowState
   );
-  
+  const onSubmit = async(id) =>{
+    const bookingsData= {
+      roomId: id,
+      checkInDate: "2025-05-20",
+      checkOutDate: "2025-05-20",
+    }
+    await dispatch(book(bookingsData));
+       
+    }
   useEffect(() => {
     dispatch(getRooms());
   }, []);
@@ -228,28 +267,49 @@ const index = () => {
                 <Card.Img src="/img/product/small/room.jpg" className="card-img-top sh-22" alt="card image" />
                 <Card.Body>
                   <h5 className="heading mb-0">
-                    <p  className="body-link stretched-link">
+                    <p  className=" ">
                       {room.original.roomNumber}
                     </p>
                   </h5>
                 </Card.Body>
-                {/* <Card.Footer className="border-0 pt-0">
-                  <div className="mb-2">
-                    <Rating
-                      initialRating={5}
-                      readonly
-                      emptySymbol={<i className="cs-star text-primary" />}
-                      fullSymbol={<i className="cs-star-full text-primary" />}
-                    />
-                    <div className="text-muted d-inline-block text-small align-text-top ms-1">(39)</div>
-                  </div>
-                  <div className="card-text mb-0">
-                    <div className="text-muted text-overline text-small">
-                      <del>$ 36.50</del>
-                    </div>
-                    <div>$ 28.75</div>
-                  </div>
-                </Card.Footer> */}
+                <Card.Footer className="border-0 pt-0">
+  {/* 👥 Guests Info */}
+  <div className="mb-2">
+    <h6 className="mb-1 text-primary">
+      <span role="img" aria-label="adults">🧍</span> Adults: {room.original.adults}
+      &nbsp;&nbsp;
+      <span role="img" aria-label="children">👶</span> Children: {room.original.children}
+    </h6>
+    <div className="text-muted small">
+      {room.original.pets ? (
+        <span role="img" aria-label="pets allowed">🐾 Pets Allowed</span>
+      ) : (
+        <span role="img" aria-label="no pets">🚫 No Pets</span>
+      )}
+    </div>
+  </div>
+
+  {/* 🏨 Hotel Info */}
+  <div className="mb-2 text-muted small">
+    <div>
+      <span role="img" aria-label="hotel">🏨</span> <strong>Hotel:</strong> {room.original.hotel.name}
+    </div>
+    <div>
+      <span role="img" aria-label="city">📍</span> <strong>City:</strong> {room.original.hotel.location}
+    </div>
+  </div>
+
+  {/* 💲 Price and Booking */}
+  <div className="d-flex justify-content-between align-items-center">
+    <div className="fw-bold text-success fs-5">
+      ${room.original.price}
+    </div>
+    <Button variant="primary" onClick={() => onSubmit(room.original.id)} disabled={!(currentUser && isLogin && currentUser?.role === USER_ROLE.Customer)}>
+      Book Now
+    </Button>
+  </div>
+</Card.Footer>
+
               </Card>
             </Col>
               );
