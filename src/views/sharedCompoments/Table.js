@@ -1,9 +1,38 @@
 /* eslint-disable no-plusplus */
 import classNames from 'classnames';
 import React from 'react';
+import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
+import { setSelectedBooking } from 'views/bookings/BookingsSlice';
+import { setSelectedHotel } from 'views/hotels/HotelSlice';
+import { setSelectedRoom } from 'views/rooms/RoomSlice';
 
 const Table = ({ tableInstance, className = 'react-table boxed' }) => {
-  const { getTableProps, headerGroups, page, getTableBodyProps, prepareRow, toggleAllPageRowsSelected, setIsOpenAddEditModal } = tableInstance;
+  const history = useHistory();
+  const dispatch = useDispatch();
+  const { getTableProps, headerGroups, page, getTableBodyProps, prepareRow, setIsOpenAddEditModal , entity} = tableInstance;
+  const setSelectedEntity = async(entityData) =>{
+    switch (entity) {
+      case 'booking':
+        await dispatch(setSelectedBooking(entityData));
+        break;
+      case 'hotel':
+        await dispatch(setSelectedHotel(entityData));
+        setIsOpenAddEditModal(true);
+        break;
+      case 'room':
+        await dispatch(setSelectedRoom(entityData));
+        setIsOpenAddEditModal(true);
+        break;
+      case 'customer':
+        console.log("CUSTOMER::: ",entityData);
+        history.push(`/app/admin/customers/details/${entityData.id}`);
+        break;
+      default:
+        console.error('Entity not exist !');
+        break;
+    }
+  }
 
   return (
     <>
@@ -34,19 +63,13 @@ const Table = ({ tableInstance, className = 'react-table boxed' }) => {
             prepareRow(row);
 
             return (
-              <tr key={`tr.${i}`} {...row.getRowProps()} className={classNames({ selected: row.isSelected })}>
+              <tr key={`tr.${i}`} {...row.getRowProps()} >
                 {row.cells.map((cell, cellIndex) => (
                   <td
                     key={`td.${cellIndex}`}
                     {...cell.getCellProps()}
                     onClick={() => {
-                      if (cell.column.id === 'name') {
-                        toggleAllPageRowsSelected(false);
-                        row.toggleRowSelected();
-                        setIsOpenAddEditModal(true);
-                      } else {
-                        row.toggleRowSelected();
-                      }
+                        setSelectedEntity(cell?.row?.original);
                     }}
                   >
                     {cell.render('Cell')}

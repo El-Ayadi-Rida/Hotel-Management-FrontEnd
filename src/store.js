@@ -19,6 +19,8 @@ import { REDUX_PERSIST_KEY } from 'config.js';
 import hotelsReducer from 'views/hotels/HotelSlice';
 import roomsReducer from 'views/rooms/RoomSlice';
 import bookingsReducer from 'views/bookings/BookingsSlice';
+import customerReducer from 'views/customers/CustomerSlice';
+import chartsReducer from 'views/charts/ChartSlice';
 
 const persistConfig = {
   key: REDUX_PERSIST_KEY,
@@ -38,7 +40,10 @@ const persistedReducer = persistReducer(
     scrollspy: scrollspyReducer,
     hotel: hotelsReducer , 
     room: roomsReducer ,
-    booking: bookingsReducer
+    booking: bookingsReducer,
+    customer: customerReducer , 
+    chart: chartsReducer
+
   })
 );
 const store = configureStore({

@@ -2,9 +2,13 @@ import BreadcrumbList from 'components/breadcrumb-list/BreadcrumbList';
 import HtmlHead from 'components/html-head/HtmlHead';
 import { USER_ROLE } from 'constants.js';
 import React from 'react'
-import { Col, Row } from 'react-bootstrap';
+import { Card, Col, Row } from 'react-bootstrap';
 import { useSelector } from 'react-redux'
 import KeyMetrics from './KeyMetrics';
+import BookingsOverTime from './charts/BookingsOverTime';
+import RoomStatus from './charts/RoomStatus';
+import TopCustomers from './charts/TopCustomers';
+import BookingByHotel from './charts/BookingByHotel';
 
 const dashboard = () => {
   const {currentUser} = useSelector((state)=> state.auth);
@@ -28,13 +32,63 @@ const dashboard = () => {
       </Row>
     </div>
     {/* Title and Top Buttons End */}
-    
+    {
+    currentUser?.role === USER_ROLE.Admin &&
+    <>
     {/* KeyMetrics Start */}
     <KeyMetrics/>
     {/* KeyMetrics End */}
 
+    <h1 className="small-title">1</h1>
+  <Row className="g-2 mb-5">
+    {/* Bookings Over Time Start */}
+        <Col xl="6">
+          <h2 className="small-title">Bookings Over Time</h2>
+          <Card className="sh-50 h-xl-100-card">
+            <Card.Body className="h-100">
+              <BookingsOverTime />
+            </Card.Body>
+          </Card>
+        </Col>
+    {/* Bookings Over Time */}
+    {/* Room Status Start */}
+        <Col xl="6">
+          <h2 className="small-title">Room Status</h2>
+          <Card className="sh-50 h-xl-100-card">
+            <Card.Body className="h-100">
+              <RoomStatus />
+            </Card.Body>
+          </Card>
+        </Col>
+    {/* Room Status */}
+      </Row>
+      <h1 className="small-title">2</h1>
+  <Row className="g-2 mb-5">
+    {/* Top Customer Start */}
+        <Col xl="6">
+          <h2 className="small-title">Top Customer</h2>
+          <Card className="sh-50 h-xl-100-card">
+            <Card.Body className="h-100">
+              <TopCustomers />
+            </Card.Body>
+          </Card>
+        </Col>
+    {/* Top Customer End */}
+    {/* booking by hotel Start */}
+        <Col xl="6">
+          <h2 className="small-title">Booking By Hotel</h2>
+          <Card className="sh-50 h-xl-100-card">
+            <Card.Body className="h-100">
+              <BookingByHotel />
+            </Card.Body>
+          </Card>
+        </Col>
+    {/* booking by hotel End */}
+      </Row>
+      </>
+    }
 
-    <div>{currentUser?.role === USER_ROLE.Admin ? 'Admin Dashboard' : 'Customer Dashboard'}</div>
+
   </>
   )
 }

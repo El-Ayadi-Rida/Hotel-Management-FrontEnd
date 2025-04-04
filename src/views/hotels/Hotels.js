@@ -34,13 +34,19 @@ const Hotels = () => {
         Header: 'Name',
         accessor: 'name',
         sortable: true,
-        headerClassName: 'text-muted text-small text-uppercase w-30',
+        headerClassName: 'text-muted text-small text-uppercase w-10',
       },
       {
         Header: 'Location',
         accessor: 'location',
         sortable: true,
-        headerClassName: 'text-muted text-small text-uppercase w-30',
+        headerClassName: 'text-muted text-small text-uppercase w-10',
+      },
+      {
+        Header: 'Rooms Count',
+        accessor: 'roomCount',
+        sortable: true,
+        headerClassName: 'text-muted text-small text-uppercase w-10',
       },
       {
         Header: '',
@@ -85,12 +91,13 @@ const Hotels = () => {
       setIsOpenAddEditModal,
       isOpenDeleteConfirmModal,
       setIsOpenDeleteConfirmModal,
-      manualPagination: true,
-      manualFilters: true,
-      manualSortBy: true,
-      autoResetPage: false,
-      autoResetSortBy: false,
-      initialState: { pageIndex: 0, sortBy: [{ id: 'name', desc: false }], hiddenColumns: ['id'] },
+      // manualPagination: true,
+      // manualFilters: true,
+      // manualSortBy: true,
+      // autoResetPage: false,
+      // autoResetSortBy: false,
+      // initialState: { pageIndex: 0, sortBy: [{ id: 'name', desc: false }], hiddenColumns: ['id'] },
+      entity: 'hotel',
     },
     useGlobalFilter,
     useSortBy,
@@ -102,7 +109,7 @@ const Hotels = () => {
 
   useEffect(() => {
     dispatch(getHotels());
-  }, []);
+  }, [dispatch]);
 
   console.log("STATUS::", addEditStatus);
   

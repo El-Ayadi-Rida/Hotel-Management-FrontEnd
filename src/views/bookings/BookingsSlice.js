@@ -72,6 +72,7 @@ export const getBookings = createAsyncThunk("bookings/getBookings",async (reject
   const initialState = {
     bookings: [],
     customerBookings: [],
+    customerBookingsCount: 0,
     count:0,
     status:'idle',
     error:null,
@@ -109,8 +110,8 @@ export const getBookings = createAsyncThunk("bookings/getBookings",async (reject
       })
       .addCase(getBookingByCustomer.fulfilled , (state , action)=>{
         state.status = "succeded";
-        state.bookings = action?.payload.bookings;
-        state.count = action?.payload.bookings?.length
+        state.customerBookings = action?.payload.bookings;
+        state.customerBookingsCount = action?.payload.bookings?.length
       })
       .addCase(getBookingByCustomer.rejected , (state , action)=>{
         state.status = "failed";

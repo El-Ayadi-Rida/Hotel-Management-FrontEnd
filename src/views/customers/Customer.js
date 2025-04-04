@@ -1,6 +1,6 @@
 /* eslint-disable no-plusplus */
 import React, { useEffect, useState } from 'react';
-import { Badge, Button, Col, Form, Row } from 'react-bootstrap';
+import { Button, Col, Form, Row } from 'react-bootstrap';
 import { useTable, useGlobalFilter, useSortBy, usePagination, useRowSelect, useRowState, useAsyncDebounce } from 'react-table';
 import HtmlHead from 'components/html-head/HtmlHead';
 import BreadcrumbList from 'components/breadcrumb-list/BreadcrumbList';
@@ -10,18 +10,12 @@ import ControlsPageSize from '../sharedCompoments/ControlsPageSize';
 import ControlsSearch from '../sharedCompoments/ControlsSearch';
 import Table from '../sharedCompoments/Table';
 import TablePagination from '../sharedCompoments/TablePagination';
-import { getBookings, setSelectedBooking } from './BookingsSlice';
-import CancelModal from './components/CancelModal';
-import ConfirmModal from './components/ConfirmModal';
+import { getCustomers } from './CustomerSlice';
 
-
-const Bookings = () => {
+const Hotels = () => {
   const dispatch = useDispatch();
-  const [isOpenConfirmModal, setIsOpenConfirmModal] = useState(false);
-  const [isOpenCancelModal, setIsOpenCancelModal] = useState(false);
-
-  const title = 'Bookings';
-  const description = 'Manage Bookings edit, cancel and get.';
+  const title = 'Customers';
+  const description = 'Manage Customers Bookings.';
   const breadcrumbs = [
     { to: '/admin/dashboard', text: 'Dashboard' },
   ];
@@ -29,78 +23,41 @@ const Bookings = () => {
   const columns = React.useMemo(() => {
     return [
       {
-        Header: 'Booking Id',
-        accessor: 'id',
-        sortable: true,
-        headerClassName: 'text-muted text-small text-uppercase w-10',
-      },
-      {
-        Header: 'Check In Date',
-        accessor: 'checkInDate',
+        Header: 'Username',
+        accessor: 'username',
         sortable: true,
         headerClassName: 'text-muted text-small text-uppercase w-30',
       },
       {
-        Header: 'Check Out Date',
-        accessor: 'checkOutDate',
+        Header: 'Email',
+        accessor: 'email',
         sortable: true,
         headerClassName: 'text-muted text-small text-uppercase w-30',
       },
       {
-        Header: 'Status',
-        accessor: 'status',
+        Header: 'Bookings',
+        accessor: 'bookingCount',
         sortable: true,
-        headerClassName: 'text-muted text-small text-uppercase w-10',
-      },
-      {
-        Header: '',
-        id: 'action',
-        headerClassName: 'empty w-20',
-        Cell: ({ row }) => {
-          const { original } = row;
-          return (
-          <div>
-              <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-only mb-1"
-                  onClick={() => {
-                    dispatch(setSelectedBooking(original));
-                    setIsOpenCancelModal(true);                    
-                  }}              
-              >
-                <CsLineIcons icon="close" />
-              </Button>{' '}
-              <Button variant="outline-primary" size="sm" className="btn-icon btn-icon-only mb-1"
-                  onClick={() => {
-                    dispatch(setSelectedBooking(original));
-                    setIsOpenConfirmModal(true);
-                  }}              
-              >
-                <CsLineIcons icon="check" />
-              </Button>
-          </div>
-          );
-        },
+        headerClassName: 'text-muted text-small text-uppercase w-20',
       },
     ];
   }, []);
 
 
-  const { bookings: data, status, error , addEditStatus } = useSelector((state) => state.booking);
+  const { customers: data, status, error } = useSelector((state) => state.customer);
+
 
   const tableInstance = useTable(
     {
       columns,
       data,
-      isOpenConfirmModal,
-      setIsOpenConfirmModal,
-      isOpenCancelModal,
-      setIsOpenCancelModal,
     //   manualPagination: true,
     //   manualFilters: true,
     //   manualSortBy: true,
     //   autoResetPage: false,
     //   autoResetSortBy: false,
-    //   initialState: { pageIndex: 0, sortBy: [{ id: 'name', desc: false }], hiddenColumns: [] },
-      entity: 'booking',
+    //   initialState: { pageIndex: 0 },
+      entity: 'customer',
     },
     useGlobalFilter,
     useSortBy,
@@ -111,8 +68,9 @@ const Bookings = () => {
 
 
   useEffect(() => {
-    dispatch(getBookings());
+    dispatch(getCustomers());
   }, []);
+
   
 
   return (
@@ -152,12 +110,10 @@ const Bookings = () => {
               </Col>
             </Row>
           </div>
-          {isOpenCancelModal && <CancelModal tableInstance={tableInstance} />}
-          {isOpenConfirmModal && <ConfirmModal tableInstance={tableInstance} />}
         </Col>
       </Row>
     </>
   );
 };
 
-export default Bookings;
+export default Hotels;

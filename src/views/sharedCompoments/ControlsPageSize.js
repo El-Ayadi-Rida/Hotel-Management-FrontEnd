@@ -9,7 +9,7 @@ const ControlsPageSize = ({ tableInstance }) => {
   } = tableInstance;
   const options = [5, 10, 20];
 
-  const onSelectPageSize = (size) => {
+  const onSelectPageSize = (size) => {    
     setPageSize(size);
     gotoPage(0);
   };
@@ -34,7 +34,7 @@ const ControlsPageSize = ({ tableInstance }) => {
             }}
           >
             {options.map((pSize) => (
-              <Dropdown.Item key={`pageSize.${pSize}`} active={pSize === pageSize} onSelect={() => onSelectPageSize(pSize)}>
+              <Dropdown.Item key={`pageSize.${pSize}`} active={pSize === pageSize} onClick={() => onSelectPageSize(pSize)}>
                 {pSize} Items
               </Dropdown.Item>
             ))}

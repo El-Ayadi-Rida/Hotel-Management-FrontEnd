@@ -2,9 +2,9 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import api from 'api';
 
 
-export const getRooms = createAsyncThunk("rooms/getRooms",async (rejectWithValue)=>{
+export const getRooms = createAsyncThunk("rooms/getRooms",async (paramsData , { rejectWithValue })=>{
     try {
-      const response = await api.get('/rooms');
+      const response = await api.get('/rooms',{params: paramsData});
       return response?.data
       } catch (error) {
       console.error("Fetching Rooms failed:", error);
