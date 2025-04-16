@@ -28,7 +28,7 @@ const Login = () => {
     
     if(currentUser){
       const userRole = currentUser?.role;
-      history.push(userRole === USER_ROLE.Admin ? "app/admin": "app/custumer");      
+      history.push(userRole === USER_ROLE.Admin ? "app/admin": "app/customer");      
     }
   },[currentUser])
   

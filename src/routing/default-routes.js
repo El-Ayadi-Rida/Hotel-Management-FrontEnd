@@ -27,7 +27,7 @@ const defaultRoutes = [
   { path: DEFAULT_PATHS.UNAUTHORIZED, exact: true, component: Unauthorized },
   { path: DEFAULT_PATHS.INVALID_ACCESS, exact: true, component: InvalidAccess },
   { path: DEFAULT_PATHS.APP, component: App },
-  { path: DEFAULT_PATHS.HOME, exact: true, component: Home },
+  { path: DEFAULT_PATHS.HOME, component: Home },
 ];
 
 export default defaultRoutes;

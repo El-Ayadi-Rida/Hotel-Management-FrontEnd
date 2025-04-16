@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useWindowSize } from 'hooks/useWindowSize';
 import { Row, Col, Button, Form, Card, Modal , InputGroup } from 'react-bootstrap';
 import Select from 'react-select';
+import { NavLink } from 'react-router-dom';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import Rating from 'react-rating';
@@ -11,22 +13,21 @@ import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useGlobalFilter, usePagination, useRowSelect, useRowState, useSortBy, useTable } from 'react-table';
 import { USER_ROLE } from 'constants.js';
-import { getRooms } from './rooms/RoomSlice';
+import { getRooms, setSelectedRoom } from './rooms/RoomSlice';
 import ControlsPageSize from './sharedCompoments/ControlsPageSize';
 import TablePagination from './sharedCompoments/TablePagination';
 import cityOptions from './hotels/components/Cities.json';
 import { book } from './bookings/BookingsSlice';
 
 
-const FilterMenuContent = () => {
+export const FilterMenuContent = ({setvValues}) => {
   const dispatch = useDispatch();
-  const [statusValue, setStatusValue] = useState({ value: '', label: 'Select Status' });
+  const [statusValue, setStatusValue] = useState({ value: 'Available', label: 'Available' });
   const [cityValue, setCityValue] = useState({ value: '', label: 'Select City' });
   const [typeValue, setTypeValue] = useState({ value: '', label: 'Select Type' });
   
   const statusOptions = [
     { value: 'Available', label: 'Available' },
-    { value: 'Booked', label: 'Booked' },
   ];
   const typeOptions = [
     { value: 'Single', label: 'Single' },
@@ -37,9 +38,9 @@ const FilterMenuContent = () => {
     });
 
     const initialValues = {
-      status: '',
+      status: 'Available',
       pets: false,
-      adults: 2,
+      adults: 0,
       children: 0,
       location: '',
       type: ''
@@ -47,6 +48,7 @@ const FilterMenuContent = () => {
 
   const onSubmit = async(values) =>{
     await dispatch(getRooms(values));    
+    setvValues(values);
     }
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
   const { handleSubmit, handleChange, values, touched, errors , setFieldValue , setValues , resetForm } = formik;
@@ -80,10 +82,12 @@ const FilterMenuContent = () => {
   const spinDownChilds = () => {
     setFieldValue('children' , parseInt(typeof values.children === 'number' ? values.children : 0, 10) - 1)
   };
-
+  useEffect(() => {
+    dispatch(getRooms(initialValues));
+  }, []);
   
   return (
-    <div className="nav flex-column sw-30 pe-7">
+    <>
       <Form className="mb-5">
         <div className="mb-3">
           <Form.Label>Room Status</Form.Label>
@@ -140,19 +144,17 @@ const FilterMenuContent = () => {
       </Form>
 
       <div className="d-flex flex-row justify-content-between w-100 w-sm-50 w-xl-100">
-        <Button variant="outline-primary" className="w-100 me-2">
-          Clear
-        </Button>
         <Button variant="primary" className="w-100 me-2" onClick={handleSubmit}>
           Filter
         </Button>
       </div>
-    </div>
+    </>
   );
 };
 
 const index = () => {
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const title = 'ROOMS';
   const description = 'Select and book you room now Page';
@@ -180,6 +182,7 @@ const index = () => {
   }, []);
   const { rooms: data, status, error , addEditStatus } = useSelector((state) => state.room);
   const { isLogin , currentUser } = useSelector((state) => state.auth);
+  const [vValues , setvValues] = useState({});
   const tableInstance = useTable(
     {
       columns,
@@ -252,7 +255,7 @@ const index = () => {
       <Row className="g-0">
         {isLgScreen && (
           <Col xs="auto" className="d-none d-lg-flex">
-            <FilterMenuContent />
+            <div className="nav flex-column sw-30 pe-7"><FilterMenuContent setvValues={setvValues}/></div>
           </Col>
         )}
         <Col>
@@ -267,48 +270,80 @@ const index = () => {
                 <Card.Img src="/img/product/small/room.jpg" className="card-img-top sh-22" alt="card image" />
                 <Card.Body>
                   <h5 className="heading mb-0">
-                    <p  className=" ">
-                      {room.original.roomNumber}
-                    </p>
+                    <Button  className="body-link stretched-link"
+                      onClick={() => {
+                        const basePrice = room.original.price;
+                        const adultsv = vValues?.adults || 1;
+                        const childrenv = vValues?.children || 0;
+                        const adjustedPrice = (adultsv * basePrice + childrenv * basePrice * 0.5).toFixed(2);
+
+                        const selectedRoom = {
+                          ...room.original,
+                          calculatedPrice: adjustedPrice, // 🆕 Add price separately
+                          adultsv,
+                          childrenv,
+                        };
+
+                        dispatch(setSelectedRoom(selectedRoom));
+                        history.push(`/room/${room.original.roomNumber}`);
+                      }}
+                    >
+                        Room Id : {room.original.roomNumber}
+                    </Button>
+
                   </h5>
                 </Card.Body>
                 <Card.Footer className="border-0 pt-0">
-  {/* 👥 Guests Info */}
-  <div className="mb-2">
-    <h6 className="mb-1 text-primary">
-      <span role="img" aria-label="adults">🧍</span> Adults: {room.original.adults}
-      &nbsp;&nbsp;
-      <span role="img" aria-label="children">👶</span> Children: {room.original.children}
-    </h6>
-    <div className="text-muted small">
-      {room.original.pets ? (
-        <span role="img" aria-label="pets allowed">🐾 Pets Allowed</span>
-      ) : (
-        <span role="img" aria-label="no pets">🚫 No Pets</span>
-      )}
-    </div>
-  </div>
+                  {/* 👥 Guests Info */}
+                  <div className="mb-2">
+                    <h6 className="mb-1 text-primary">
+                      <span role="img" aria-label="adults">🧍</span> Adults: {room.original.adults}
+                      &nbsp;&nbsp;
+                      <span role="img" aria-label="children">👶</span> Children: {room.original.children}
+                    </h6>
+                    <div className="text-muted small">
+                      {room.original.pets ? (
+                        <span role="img" aria-label="pets allowed">🐾 Pets Allowed</span>
+                      ) : (
+                        <span role="img" aria-label="no pets">🚫 No Pets</span>
+                      )}
+                    </div>
+                  </div>
 
-  {/* 🏨 Hotel Info */}
-  <div className="mb-2 text-muted small">
-    <div>
-      <span role="img" aria-label="hotel">🏨</span> <strong>Hotel:</strong> {room.original.hotel.name}
-    </div>
-    <div>
-      <span role="img" aria-label="city">📍</span> <strong>City:</strong> {room.original.hotel.location}
-    </div>
-  </div>
+                  {/* 🏨 Hotel Info */}
+                  <div className="mb-2 text-muted small">
+                    <div>
+                      <span role="img" aria-label="hotel">🏨</span> <strong>Hotel:</strong> {room.original.hotel.name}
+                    </div>
+                    <div>
+                      <span role="img" aria-label="city">📍</span> <strong>City:</strong> {room.original.hotel.location}
+                    </div>
+                  </div>
 
-  {/* 💲 Price and Booking */}
-  <div className="d-flex justify-content-between align-items-center">
-    <div className="fw-bold text-success fs-5">
-      ${room.original.price}
-    </div>
-    <Button variant="primary" onClick={() => onSubmit(room.original.id)} disabled={!(currentUser && isLogin && currentUser?.role === USER_ROLE.Customer)}>
-      Book Now
-    </Button>
-  </div>
-</Card.Footer>
+                  {/* 💲 Price and Booking */}
+                  <div className="d-flex justify-content-between align-items-center">
+                  <div className="text-muted small">
+                    ${room.original.price} x {vValues?.adults || 1} Adult(s)
+                    {vValues?.children > 0 && (
+                      <>
+                        {' + '}
+                        ${(room.original.price * 0.5).toFixed(2)} x {vValues.children} Child(ren)
+                      </>
+                    )}
+                  </div>
+                  <div className="fw-bold text-success fs-5">
+                    Total: $
+                    {(
+                      (vValues?.adults || 1) * room.original.price +
+                      (vValues?.children || 0) * room.original.price * 0.5
+                    ).toFixed(2)}
+                  </div>
+
+                    {/* <Button variant="primary" onClick={() => onSubmit(room.original.id)} disabled={!(currentUser && isLogin && currentUser?.role === USER_ROLE.Customer)}>
+                      Book Now
+                    </Button> */}
+                  </div>
+                </Card.Footer>
 
               </Card>
             </Col>

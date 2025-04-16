@@ -136,6 +136,8 @@ export const getBookings = createAsyncThunk("bookings/getBookings",async (reject
         state.status = "succeded";
         const index = state.bookings.findIndex((r)=>r.id === action.payload?.booking?.id);
         state.bookings[index] = action.payload.booking; 
+        const index1 = state.customerBookings.findIndex((r)=>r.id === action.payload?.booking?.id);
+        state.customerBookings[index1] = action.payload.booking; 
       })
       .addCase(cancelBooking.rejected , (state,action)=>{
         state.status = "failed";

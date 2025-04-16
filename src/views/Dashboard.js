@@ -9,6 +9,8 @@ import BookingsOverTime from './charts/BookingsOverTime';
 import RoomStatus from './charts/RoomStatus';
 import TopCustomers from './charts/TopCustomers';
 import BookingByHotel from './charts/BookingByHotel';
+import CustomerKeyMetrics from './CustomerKeyMetrics';
+import BookingsByHotelC from './charts/BookingsByHotelC';
 
 const dashboard = () => {
   const {currentUser} = useSelector((state)=> state.auth);
@@ -86,6 +88,24 @@ const dashboard = () => {
     {/* booking by hotel End */}
       </Row>
       </>
+    }
+    {currentUser?.role === USER_ROLE.Customer &&
+    <>
+    <CustomerKeyMetrics/>
+  <Row className="g-2 mb-5">
+    {/* booking by hotel Start */}
+        <Col >
+          <h2 className="small-title">Booking By Hotel</h2>
+          <Card className="sh-50 h-xl-100-card">
+            <Card.Body className="h-100">
+              <BookingsByHotelC />
+            </Card.Body>
+          </Card>
+        </Col>
+    {/* booking by hotel End */}
+      </Row>
+
+    </>
     }
 
 

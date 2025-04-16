@@ -32,6 +32,16 @@ export const fBookingsByHotel = createAsyncThunk("charts/bookingsByHotel",async 
       return rejectWithValue(error.response?.data?.message || "Fetching data failed. Please try again.");
     }
   })
+export const fBookingsByHotelC = createAsyncThunk("charts/bookingsByHotelC",async (rejectWithValue)=>{
+    try {
+      const response = await api.get('/analytics/bookings-by-hotel-customer');
+      return response?.data
+      } catch (error) {
+      console.error("Fetching data failed:", error);
+      // Return a custom error message or the error itself
+      return rejectWithValue(error.response?.data?.message || "Fetching data failed. Please try again.");
+    }
+  })
 export const fTopCustomers = createAsyncThunk("charts/topCustomers",async (rejectWithValue)=>{
     try {
       const response = await api.get('/analytics/top-customers');
@@ -96,6 +106,17 @@ export const fTopCustomers = createAsyncThunk("charts/topCustomers",async (rejec
         state.bookingsByHotel = action?.payload;
       })
       .addCase(fBookingsByHotel.rejected , (state , action)=>{
+        state.bookingsByHotelStatus = "failed";
+        state.bookingsByHotelError = action?.payload;    
+      })
+      .addCase(fBookingsByHotelC.pending , (state)=>{
+        state.bookingsByHotelStatus = "loading";
+      })
+      .addCase(fBookingsByHotelC.fulfilled , (state , action)=>{
+        state.bookingsByHotelStatus = "succeded";
+        state.bookingsByHotel = action?.payload;
+      })
+      .addCase(fBookingsByHotelC.rejected , (state , action)=>{
         state.bookingsByHotelStatus = "failed";
         state.bookingsByHotelError = action?.payload;    
       })

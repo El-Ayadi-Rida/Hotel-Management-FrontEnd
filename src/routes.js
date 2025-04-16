@@ -8,6 +8,7 @@ import VerticalPage from 'views/Vertical';
 const home = {
   index: lazy(() => import('views/index')),
   dashboard: lazy(() => import('views/Dashboard')),
+  roomDetails: lazy(() => import('views/rooms/components/RoomDetails')),
 };
 
 const hotel = {
@@ -18,6 +19,7 @@ const room = {
 };
 const bookings = {
   list: lazy(() => import('views/bookings/Bookings')),
+  Mylist: lazy(() => import('views/bookings/MyBookings')),
 };
 const customers = {
   list: lazy(() => import('views/customers/Customer')),
@@ -42,6 +44,15 @@ const routesAndMenuItems = {
       icon: 'home-garage',
       exact: true,
       component: home.index,
+      roles: [USER_ROLE.Default] 
+    },
+    {
+      path: `${DEFAULT_PATHS.HOME}room/:id`,
+      label: '',
+      icon: '',
+      exact: true,
+      component: home.roomDetails,
+      roles: [USER_ROLE.Default] 
     },
 
     {
@@ -52,10 +63,10 @@ const routesAndMenuItems = {
       roles: [USER_ROLE.Admin] 
     },
     {
-      path: `${appRoot}/custumer`,
+      path: `${appRoot}/customer`,
       exact: true,
       redirect: true,
-      to: `${appRoot}/custumer/dashboard`,
+      to: `${appRoot}/customer/dashboard`,
       roles: [USER_ROLE.Customer] 
     },
     {
@@ -66,7 +77,7 @@ const routesAndMenuItems = {
       roles: [USER_ROLE.Admin],
     },
     {
-      path: `${appRoot}/custumer/dashboard`,
+      path: `${appRoot}/customer/dashboard`,
       label: 'menu.dashboards',
       icon: 'menu-dashed',
       component: home.dashboard,
@@ -96,6 +107,14 @@ const routesAndMenuItems = {
       exact: true,
       component: bookings.list,
       roles: [USER_ROLE.Admin],
+    },
+    {
+      path: `${appRoot}/customer/bookings`,
+      label: 'menu.mybookings',
+      icon: 'square',
+      exact: true,
+      component: bookings.Mylist,
+      roles: [USER_ROLE.Customer],
     },
     {
       path: `${appRoot}/admin/customers`,

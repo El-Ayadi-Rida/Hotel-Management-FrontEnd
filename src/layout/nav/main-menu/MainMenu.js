@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
+import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 import { DEFAULT_USER } from 'config.js';
-import { MENU_PLACEMENT, MENU_BEHAVIOUR } from 'constants.js';
+import { MENU_PLACEMENT, MENU_BEHAVIOUR, USER_ROLE } from 'constants.js';
 import { OverlayScrollbarsComponent } from 'overlayscrollbars-react';
 import { getMenuItems } from 'routing/helper';
 import { useWindowSize } from 'hooks/useWindowSize';
@@ -24,19 +25,22 @@ import { checkBehaviour, checkPlacement, isDeeplyDiffBehaviourStatus, isDeeplyDi
 
 const MainMenu = () => {
   const dispatch = useDispatch();
+  const location = useLocation()
   const { placement, behaviour, placementStatus, behaviourStatus, attrMobile, breakpoints, useSidebar } = useSelector((state) => state.menu);
   const { isLogin, currentUser } = useSelector((state) => state.auth);
   const scrolled = useWindowScroll();
   const { width } = useWindowSize();
+  const isOtherPath = !(location.pathname === '/app' || location.pathname.startsWith('/app/'));  
+
 
   const menuItemsMemo = useMemo(
     () =>
       getMenuItems({
         data: attrMobile && useSidebar ? routesAndMenuItems : routesAndMenuItems.mainMenuItems,
-        isLogin,
-        userRole: currentUser?.role || DEFAULT_USER.role,
+        isLogin: isOtherPath || isLogin,
+        userRole: isOtherPath ? USER_ROLE.Default :currentUser?.role,
       }),
-    [isLogin, currentUser, attrMobile, useSidebar]
+    [isLogin, currentUser, attrMobile, useSidebar , isOtherPath]
   );
 
   useEffect(() => {
