@@ -173,5 +173,8 @@ const enMessages = {
   'menu.player': 'es|Player',
   'menu.material': 'es|Material',
   'menu.syllabus': 'es|Syllabus',
+
+  'menu.room': 'Room b espana',
+
 };
 export default enMessages;

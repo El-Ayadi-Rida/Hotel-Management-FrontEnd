@@ -71,6 +71,7 @@ const Rooms = () => {
           <div>
               <Button variant="outline-danger" size="sm" className="btn-icon btn-icon-only mb-1"
                   onClick={() => {
+                    
                     dispatch(setSelectedRoom(original));
                     setIsOpenDeleteConfirmModal(true);
                   }}              

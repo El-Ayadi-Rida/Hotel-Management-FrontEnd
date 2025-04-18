@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Badge, Button, Col, Form, Row } from 'react-bootstrap';
 import { useTable, useGlobalFilter, useSortBy, usePagination, useRowSelect, useRowState, useAsyncDebounce } from 'react-table';
 import HtmlHead from 'components/html-head/HtmlHead';
+import { format } from 'date-fns';
 import BreadcrumbList from 'components/breadcrumb-list/BreadcrumbList';
 import { useDispatch, useSelector } from 'react-redux';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
@@ -36,15 +37,22 @@ const Bookings = () => {
       },
       {
         Header: 'Check In Date',
-        accessor: 'checkInDate',
         sortable: true,
         headerClassName: 'text-muted text-small text-uppercase w-30',
+        Cell: ({ row }) => {
+          const { checkInDate } = row.original;
+          return (<>{ format(new Date(checkInDate) , 'dd-mm-yyyy')}</>)
+        }
+
       },
       {
         Header: 'Check Out Date',
-        accessor: 'checkOutDate',
         sortable: true,
         headerClassName: 'text-muted text-small text-uppercase w-30',
+        Cell: ({ row }) => {
+          const { checkOutDate } = row.original;
+          return (<>{ format(new Date(checkOutDate) , 'dd-mm-yyyy')}</>)
+        }
       },
       {
         Header: 'Status',

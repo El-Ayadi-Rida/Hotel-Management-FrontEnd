@@ -47,7 +47,7 @@ const routesAndMenuItems = {
       roles: [USER_ROLE.Default] 
     },
     {
-      path: `${DEFAULT_PATHS.HOME}room/:id`,
+      path: `${DEFAULT_PATHS.HOME}room/:roomId`,
       label: '',
       icon: '',
       exact: true,

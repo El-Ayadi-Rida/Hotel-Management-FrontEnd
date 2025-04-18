@@ -45,9 +45,8 @@ const ModalAddEdit = ({ tableInstance }) => {
       /^\d+(\.\d{1,2})?$/.test(value?.toString())
     ),
     type: Yup.string().required('Type id is required'),
-    status: Yup.string().required('Status id is required'),
+    // status: Yup.string().required('Status id is required'),
     children: Yup.number()    
-    .positive('children number must be positive')
     .required('children id is required'),
     adults: Yup.number()
     .positive('adults number must be positive')
@@ -59,7 +58,7 @@ const ModalAddEdit = ({ tableInstance }) => {
     roomNumber: '',
     type: '',
     price: '',
-    status: '',
+    status: 'Available',
     pets: false,
     adults: 2,
     children: 0,
@@ -194,11 +193,11 @@ const ModalAddEdit = ({ tableInstance }) => {
             <Select classNamePrefix="react-select" name="type" options={typeOptions} value={typeValue} onChange={typeOnChange} placeholder="Select" />
             {errors.type && touched.type && <div className="d-block invalid-tooltip">{errors.type}</div>}
           </div>
-          <div className="mb-3">
+          {/* <div className="mb-3">
             <Form.Label>Room Status</Form.Label>
             <Select classNamePrefix="react-select" name="status" options={statusOptions} value={statusValue} onChange={statusOnChange} placeholder="Select" />
             {errors.status && touched.status && <div className="d-block invalid-tooltip">{errors.status}</div>}
-          </div>
+          </div> */}
           <div className="mb-3">
             <Form.Label>Room Number</Form.Label>
             <Form.Control type="number" name="roomNumber" onChange={handleChange} value={values.roomNumber} placeholder="Hotel room Number ..."/>

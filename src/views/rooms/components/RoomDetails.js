@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Row, Col, Card, Button, ProgressBar } from 'react-bootstrap';
 import Plyr from 'plyr-react';
+import { useParams } from 'react-router-dom/cjs/react-router-dom.min';
 import { useDispatch, useSelector } from 'react-redux';
 import Rating from 'react-rating';
 import { book } from 'views/bookings/BookingsSlice';
@@ -9,6 +10,7 @@ import BreadcrumbList from 'components/breadcrumb-list/BreadcrumbList';
 import CsLineIcons from 'cs-line-icons/CsLineIcons';
 import { USER_ROLE } from 'constants.js';
 import CarouselGallery from './CarouselGallery';
+import { getRoomById } from '../RoomSlice';
 
 const PurePlyr = React.memo(() => {
   const videoSrc = {
@@ -21,7 +23,8 @@ const PurePlyr = React.memo(() => {
 });
 
 const RoomDetail = () => {
-  const dispatch = useDispatch  ();
+  const dispatch = useDispatch();
+  const { roomId } = useParams();
   const title = 'ROOM Detail';
   const description = 'Hotel ROOM Detail Page';
 
@@ -49,6 +52,12 @@ const RoomDetail = () => {
     await dispatch(book(bookingsData));
        
     }
+
+    useEffect(async()=>{
+      if (!selectedRoom && roomId) {
+        await dispatch(getRoomById(roomId));
+      }
+    },[])
 
   return (
     <>

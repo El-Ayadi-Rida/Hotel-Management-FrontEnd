@@ -18,11 +18,11 @@ const Table = ({ tableInstance, className = 'react-table boxed' }) => {
         break;
       case 'hotel':
         await dispatch(setSelectedHotel(entityData));
-        setIsOpenAddEditModal(true);
+        // setIsOpenAddEditModal(true);
         break;
       case 'room':
         await dispatch(setSelectedRoom(entityData));
-        setIsOpenAddEditModal(true);
+        // setIsOpenAddEditModal(true);
         break;
       case 'customer':
         console.log("CUSTOMER::: ",entityData);
@@ -73,6 +73,7 @@ const Table = ({ tableInstance, className = 'react-table boxed' }) => {
                     }}
                   >
                     {cell.render('Cell')}
+
                   </td>
                 ))}
               </tr>

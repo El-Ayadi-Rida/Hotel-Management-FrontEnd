@@ -7,9 +7,14 @@ const DeleteConfirmModal = ({ tableInstance }) => {
   const dispatch = useDispatch();
   const { status , selectedRoom } = useSelector((state) => state.room);
   const { isOpenDeleteConfirmModal, setIsOpenDeleteConfirmModal } = tableInstance;
+  console.log(selectedRoom);
   
-  const onDeleteConfirm = () => {
-    dispatch(deleteRoom(selectedRoom?.id));
+  const onDeleteConfirm = async() => {
+    if (selectedRoom.id) {
+      console.log("room ID :::" , selectedRoom.id);
+      
+      await dispatch(deleteRoom(selectedRoom?.id));
+    }
     dispatch(setSelectedRoom(undefined));
     setIsOpenDeleteConfirmModal(false);
 

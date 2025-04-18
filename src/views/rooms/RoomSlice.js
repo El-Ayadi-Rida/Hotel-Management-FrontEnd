@@ -12,6 +12,16 @@ export const getRooms = createAsyncThunk("rooms/getRooms",async (paramsData , { 
       return rejectWithValue(error.response?.data?.message || "Fetching Rooms failed. Please try again.");
     }
   })
+export const getRoomById = createAsyncThunk("rooms/getRoomById",async (roomId , { rejectWithValue })=>{
+    try {
+      const response = await api.get(`/rooms/${roomId}`);
+      return response?.data
+      } catch (error) {
+      console.error("Fetching Room By Id failed:", error);
+      // Return a custom error message or the error itself
+      return rejectWithValue(error.response?.data?.message || "Fetching Room By Id failed. Please try again.");
+    }
+  })
 
   export const createRoom = createAsyncThunk("rooms/createRoom" , async (roomData , { rejectWithValue })=>{
     try {
@@ -78,6 +88,18 @@ export const getRooms = createAsyncThunk("rooms/getRooms",async (paramsData , { 
         state.count = action?.payload?.length
       })
       .addCase(getRooms.rejected , (state , action)=>{
+        state.status = "failed";
+        state.error = action?.payload;    
+
+      })
+      .addCase(getRoomById.pending , (state)=>{
+        state.status = "loading";
+      })
+      .addCase(getRoomById.fulfilled , (state , action)=>{
+        state.status = "succeded";
+        state.selectedRoom = action?.payload;
+      })
+      .addCase(getRoomById.rejected , (state , action)=>{
         state.status = "failed";
         state.error = action?.payload;    
 

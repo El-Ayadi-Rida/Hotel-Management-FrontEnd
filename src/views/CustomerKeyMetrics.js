@@ -21,7 +21,7 @@ const CustomerKeyMetrics = () => {
       <h2 className="small-title">Key Metrics</h2>
       <Row className="g-2 mb-5">
         <Col xl="4">
-          <NavLink to='/app/admin/hotels'>
+          <>
             <Card className="bg-gradient-light hover-border-primary">
               <Card.Body className="py-4">
                 <Row className="g-0 align-items-center">
@@ -41,10 +41,10 @@ const CustomerKeyMetrics = () => {
                 </Row>
               </Card.Body>
             </Card>
-          </NavLink>
+          </>
         </Col>
         <Col xl="4">
-          <NavLink to='/app/admin/rooms'>
+          <>
             <Card className="hover-border-primary">
               <Card.Body className="py-4">
                 <Row className="g-0 align-items-center">
@@ -62,10 +62,10 @@ const CustomerKeyMetrics = () => {
                 </Row>
               </Card.Body>
             </Card>
-          </NavLink>
+          </>
         </Col>
         <Col xl="4">
-          <NavLink to='/app/admin/bookings'>
+          <>
             <Card className="hover-border-primary">
               <Card.Body className="py-4">
                 <Row className="g-0 align-items-center">
@@ -83,7 +83,7 @@ const CustomerKeyMetrics = () => {
                 </Row>
               </Card.Body>
             </Card>
-          </NavLink>
+          </>
         </Col>
       </Row>
     </>

@@ -285,7 +285,7 @@ const index = () => {
                         };
 
                         dispatch(setSelectedRoom(selectedRoom));
-                        history.push(`/room/${room.original.roomNumber}`);
+                        history.push(`/room/${room.original.id}`);
                       }}
                     >
                         Room Id : {room.original.roomNumber}
