@@ -1,6 +1,6 @@
 /* eslint-disable no-plusplus */
 import React, { useEffect, useState } from 'react';
-import {  Card, Col, Row } from 'react-bootstrap';
+import { Card, Col, Row } from 'react-bootstrap';
 import { useTable, useGlobalFilter, useSortBy, usePagination, useRowSelect, useRowState, useAsyncDebounce } from 'react-table';
 import { Link } from 'react-router-dom';
 import HtmlHead from 'components/html-head/HtmlHead';
@@ -98,16 +98,22 @@ const HotelList = () => {
             </Row>
             <Row>
               <Col xs="12">
+              <Row>
                 {page.map((row, i) => {
                   const item = row.original;
                   return (
-                    <Card key={i}>
+                    <Col key={i} xs="12" >
+                    <Card className="h-100">
                       <Link to={`/rooms/${item.id}`}>
-                      {item.name}
+                        <Card.Img src="/img/product/small/room.jpg" className="card-img-top sh-22" alt="card image" />
+                        <Card.Body>{item.name}</Card.Body>
+                        <Card.Footer className="border-0 pt-0">tese</Card.Footer>
                       </Link>
                     </Card>
+                    </Col>
                   );
                 })}
+                </Row>
               </Col>
               <Col xs="12">
                 <TablePagination tableInstance={tableInstance} />
