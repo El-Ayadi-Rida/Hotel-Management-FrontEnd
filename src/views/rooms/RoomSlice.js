@@ -57,6 +57,18 @@ export const getRoomById = createAsyncThunk("rooms/getRoomById",async (roomId , 
     }
   })
 
+  export const createReview = createAsyncThunk("rooms/createReview" , async (args , { rejectWithValue })=>{
+    try {
+      const { roomId ,values} = args;
+      const response = await api.post(`/rooms/reviews/${roomId}`,values);
+      return response?.data;
+      } catch (error) {
+      console.error("Create Review failed:", error);
+      // Return a custom error message or the error itself
+      return rejectWithValue(error.response?.data?.message || "Create Review failed. Please try again.");
+    }
+  })
+
   const initialState = {
     rooms: [],
     count:0,
@@ -112,6 +124,36 @@ export const getRoomById = createAsyncThunk("rooms/getRoomById",async (roomId , 
         state.rooms.push(action.payload.room);
       })
       .addCase(createRoom.rejected , (state,action)=>{
+        state.addEditStatus = "failed";
+        state.addEditError = action?.payload;    
+
+      })
+      .addCase(createReview.pending , (state)=>{
+        state.addEditStatus = "loading";
+      })
+      .addCase(createReview.fulfilled , (state,action)=>{
+        state.addEditStatus = "succeded";
+        const {roomId} = action.meta.arg;
+        const index = state.rooms.findIndex((r) => r.id === roomId);
+      
+        if (index !== -1) {
+          const room = state.rooms[index];
+      
+          // Ensure the room has a reviews array
+          if (!Array.isArray(room.reviews)) {
+            room.reviews = [];
+          }
+      
+          // Push the new review
+          room.reviews.push(action.payload.review);
+          state.selectedRoom.reviews.push(action.payload.review);
+        } else {
+          console.warn("Room not found in state.rooms for review update");
+        }
+      
+
+      })
+      .addCase(createReview.rejected , (state,action)=>{
         state.addEditStatus = "failed";
         state.addEditError = action?.payload;    
 

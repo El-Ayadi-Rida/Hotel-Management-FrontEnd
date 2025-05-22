@@ -13,6 +13,7 @@ const home = {
 
 const hotel = {
   list: lazy(() => import('views/hotels/Hotels')),
+  explore: lazy(() => import('views/hotels/HotelList')),
 };
 const room = {
   list: lazy(() => import('views/rooms/Rooms')),
@@ -43,6 +44,15 @@ const routesAndMenuItems = {
       label: 'menu.home',
       icon: 'home-garage',
       exact: true,
+      component: hotel.explore,
+      roles: [USER_ROLE.Default] 
+    },
+
+        {
+      path: `${DEFAULT_PATHS.HOME}rooms/:hotelId`,
+      label: '',
+      icon: '',
+      exact: true,
       component: home.index,
       roles: [USER_ROLE.Default] 
     },
@@ -54,6 +64,7 @@ const routesAndMenuItems = {
       component: home.roomDetails,
       roles: [USER_ROLE.Default] 
     },
+
 
     {
       path: `${appRoot}/admin`,

@@ -3,7 +3,8 @@ import { useWindowSize } from 'hooks/useWindowSize';
 import { Row, Col, Button, Form, Card, Modal , InputGroup } from 'react-bootstrap';
 import Select from 'react-select';
 import { NavLink } from 'react-router-dom';
-import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
+import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min';
+
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import Rating from 'react-rating';
@@ -22,6 +23,7 @@ import { book } from './bookings/BookingsSlice';
 
 export const FilterMenuContent = ({setvValues}) => {
   const dispatch = useDispatch();
+  const { hotelId } = useParams();
   const [statusValue, setStatusValue] = useState({ value: 'Available', label: 'Available' });
   const [cityValue, setCityValue] = useState({ value: '', label: 'Select City' });
   const [typeValue, setTypeValue] = useState({ value: '', label: 'Select Type' });
@@ -47,7 +49,7 @@ export const FilterMenuContent = ({setvValues}) => {
     };
 
   const onSubmit = async(values) =>{
-    await dispatch(getRooms(values));    
+    await dispatch(getRooms({...values , hotelId}));    
     setvValues(values);
     }
   const formik = useFormik({ initialValues, validationSchema, onSubmit });
@@ -83,7 +85,7 @@ export const FilterMenuContent = ({setvValues}) => {
     setFieldValue('children' , parseInt(typeof values.children === 'number' ? values.children : 0, 10) - 1)
   };
   useEffect(() => {
-    dispatch(getRooms(initialValues));
+    dispatch(getRooms({...initialValues , hotelId}));
   }, []);
   
   return (
@@ -155,6 +157,8 @@ export const FilterMenuContent = ({setvValues}) => {
 const index = () => {
   const dispatch = useDispatch();
   const history = useHistory();
+    const { hotelId } = useParams();
+
 
   const title = 'ROOMS';
   const description = 'Select and book you room now Page';
@@ -205,8 +209,10 @@ const index = () => {
        
     }
   useEffect(() => {
-    dispatch(getRooms());
-  }, []);
+    if (hotelId) {      
+      dispatch(getRooms({hotelId}));
+    }
+  }, [hotelId]);
 
 
   useEffect(() => {
